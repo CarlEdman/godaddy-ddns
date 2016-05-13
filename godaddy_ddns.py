@@ -10,10 +10,14 @@ prog='godaddy-ddns'
 version='0.1'
 author='Carl Edman (CarlEdman@gmail.com)'
 
-from urllib.request import urlopen, Request
-from urllib.parse import urlparse, urlunparse, urlencode
+import sys, json, argparse, logging
 
-import json, sys, argparse, logging
+if sys.version_info > (3,):
+  from urllib.request import urlopen, Request
+else:
+  from urllib2 import urlopen, Request
+
+logging.basicConfig()
 
 parser = argparse.ArgumentParser(description='Update GoDaddy DNS "A" Record.', fromfile_prefix_chars='@')
 
@@ -42,6 +46,7 @@ def main():
   
   if len(hostnames)<3:
     msg = 'Hostname "{}" is not a fully-qualified host name of form "HOST.DOMAIN.TOP".'.format(args.hostname)
+    logging.critical(msg)
     raise Exception(msg)
   
   if not args.ip:
@@ -53,6 +58,7 @@ def main():
     not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or 
     int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255):
     msg = 'IP address "{}" is not valid.'.format(args.ip)
+    logging.critical(msg)
     raise Exception(msg)
 
   url = 'https://api.godaddy.com/v1/domains/{}/records/A/{}'.format(hostnames[0],'.'.join(hostnames[1:]))
@@ -64,18 +70,19 @@ def main():
   if args.key and args.secret:
     req.add_header("Authorization", "sso-key {}:{}".format(args.key,args.secret))
   else:
-    msg = 'Failure to provide both GoDaddy key and secret.
-  These can be obtained from https://developer.godaddy.com/keys/ and are ideally placed in a @ file.'
-    warnings.warn(msg)
+    msg = '''No GoDaddy key and secret.
+These can be obtained from https://developer.godaddy.com/keys/ and are ideally placed in a @ file.'''
+    logging.warning(msg)
 
   with urlopen(req) as f:
     resp = f.read().decode('utf-8')
     code = f.getcode()
   
   if code==200:
-    print('Successfully changed GoDaddy IP address for "{}" to "{}".'.format(args.hostnames,args.ip)
+    print('Successfully changed GoDaddy IP address for {} to {}.'.format(args.hostname,args.ip)
   else:
-    msg = 'Failure to set GoDaddy A record (code={},response={})'.format(code,resp)
+    msg = 'Failure to set GoDaddy A record (code={},response="{}")'.format(code,resp)
+    logging.critical(msg)
     raise Exception(msg)
   
 if __name__ == '__main__':
