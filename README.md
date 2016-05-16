@@ -8,9 +8,9 @@ Dependencies
 ------------
 You'll need:
 
- - Python (`opkg install python-light`):
- - Logging (`pip install python-logging`)
- - OpenSSL (`pip install python-openssl`)
+ - Python (`opkg install python3-light`):
+ - Logging (`pip install python3-logging`)
+ - OpenSSL (`pip install python3-openssl`)
 
 Usage
 -----
