@@ -18,11 +18,9 @@ been tested.
 
 Usage
 -----
-godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY]
-                [--secret SECRET] [--ttl TTL]
-                hostname
+godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY] [--secret SECRET] [--ttl TTL] hostname
 
-positional arguments:
+positional arguments: 
   hostname         DNS fully-qualified host name
 
 optional arguments:
@@ -33,11 +31,9 @@ optional arguments:
   --secret SECRET  GoDaddy production secret
   --ttl TTL        DNS TTL.
 
-GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at 
-https://developer.godaddy.com/keys/.  
+GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.  
 
-Note that command line arguments may be specified in a FILE, one to a line, by instead giving
-the argument "@FILE".  For security reasons, it is particularly recommended to supply the 
+Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the 
 KEY and SECRET arguments in such a file, rather than directly on the command line:
 
 Create a file named, e.g., `godaddy-ddns.config` with the content:
