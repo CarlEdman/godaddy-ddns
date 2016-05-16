@@ -42,10 +42,10 @@ Invoke the program like this:
 
 GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.  
 
-Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the 
-KEY and SECRET arguments in such a file, rather than directly on the command line:
+Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
 
 Create a file named, e.g., `godaddy-ddns.config` with the content:
+
      MY.FULLY.QUALIFIED.HOSTNAME.COM
      --key
      MY-KEY-FROM-GODADDY
