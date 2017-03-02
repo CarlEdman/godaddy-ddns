@@ -21,7 +21,7 @@
 # https://developer.godaddy.com/keys/.  
 # 
 # Note that command line arguments may be specified in a FILE, one to a line, by instead giving
-# the argument "@FILE".  For security reasons, it is particularly recommended to supply the 
+# the argument "%FILE".  For security reasons, it is particularly recommended to supply the 
 # KEY and SECRET arguments in such a file, rather than directly on the command line:
 #
 # Create a file named, e.g., `godaddy-ddns.config` with the content:
@@ -31,7 +31,7 @@
 #   --secret
 #   MY-SECRET-FROM-GODADDY
 #
-# Then just invoke `godaddy-ddns @godaddy-ddns.config`
+# Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 prog='godaddy-ddns'
 version='0.1'
@@ -46,12 +46,12 @@ else:
   from urllib2 import urlopen, Request
   from urllib2 import URLError, HTTPError
 
-parser = argparse.ArgumentParser(description='Update GoDaddy DNS "A" Record.', fromfile_prefix_chars='@', epilog= \
+parser = argparse.ArgumentParser(description='Update GoDaddy DNS "A" Record.', fromfile_prefix_chars='%', epilog= \
 '''GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at 
 https://developer.godaddy.com/keys/.  
 
 Note that command line arguments may be specified in a FILE, one to a line, by instead giving
-the argument "@FILE".  For security reasons, it is particularly recommended to supply the 
+the argument "%FILE".  For security reasons, it is particularly recommended to supply the 
 KEY and SECRET arguments in such a file, rather than directly on the command line.''')
 
 parser.add_argument('--version', action='version',
@@ -115,13 +115,13 @@ def main():
     elif e.code==401:
       if args.key and args.secret:
         msg = '''Unable to set IP address: --key or --secret option incorrect.
-Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a @ file.'''
+Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a % file.'''
       else:
         msg = '''Unable to set IP address: --key or --secret option missing.
-Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a @ file.'''
+Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a % file.'''
     elif e.code==403:
         msg = '''Unable to set IP address: customer identified by --key and --secret options denied permission.
-Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a @ file.'''
+Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a % file.'''
     elif e.code==404:
         msg = 'Unable to set IP address: {} not found at GoDaddy.'.format(args.hostname)
     elif e.code==422:
