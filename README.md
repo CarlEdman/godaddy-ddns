@@ -24,7 +24,7 @@ Invoke the program like this:
      
      positional arguments: 
      
-     hostname         DNS fully-qualified host name
+     hostname         DNS fully-qualified host name with an 'A' record
      
      optional arguments:
      
