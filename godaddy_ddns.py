@@ -7,7 +7,7 @@
 #                        hostname
 #
 # positional arguments:
-#   hostname         DNS fully-qualified host name
+#   hostname         DNS fully-qualified host name with an 'A' record
 #
 # optional arguments:
 #   -h, --help       show this help message and exit
@@ -125,7 +125,7 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
     elif e.code==404:
         msg = 'Unable to set IP address: {} not found at GoDaddy.'.format(args.hostname)
     elif e.code==422:
-        msg = 'Unable to set IP address: "{}" has invalid domain.'.format(args.hostname)
+        msg = 'Unable to set IP address: "{}" has invalid domain or lacks A record.'.format(args.hostname)
     elif e.code==429:
         msg = 'Unable to set IP address: too many requests to GoDaddy within brief period.'
     else:
