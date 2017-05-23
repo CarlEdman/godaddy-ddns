@@ -58,7 +58,7 @@ parser.add_argument('--version', action='version',
   version='{} {}'.format(prog, version))
 
 parser.add_argument('hostname', type=str,
-  help='DNS fully-qualified host name')
+  help='DNS fully-qualified host name with an A record')
 
 parser.add_argument('--ip', type=str, default=None,
   help='DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)')
