@@ -52,7 +52,7 @@ Create a file named, e.g., `godaddy-ddns.config` with the content:
      --secret
      MY-SECRET-FROM-GODADDY
 
-Then just invoke `godaddy-ddns @godaddy-ddns.config`
+Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 Credits and Thanks
 ------------------
@@ -60,3 +60,4 @@ Credits and Thanks
  - [GoDaddy](https://www.godaddy.com/) for having an [API](https://developer.godaddy.com/).
  - [icanhazip.com](http://icanhazip.com/) for making grabbing your public IP
     from a script super easy.
+ - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record. 
