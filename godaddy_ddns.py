@@ -34,7 +34,7 @@
 # Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 prog='godaddy-ddns'
-version='0.1'
+version='0.2'
 author='Carl Edman (CarlEdman@gmail.com)'
 
 import sys, json, argparse
