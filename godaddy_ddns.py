@@ -7,7 +7,8 @@
 #                        hostname
 #
 # positional arguments:
-#   hostname         DNS fully-qualified host name with an 'A' record
+#   hostname         DNS fully-qualified host name with an 'A' record.  If the hostname consists of only a domain name
+#                    (i.e., it contains only one period), the record for '@' is updated.
 #
 # optional arguments:
 #   -h, --help       show this help message and exit
@@ -34,7 +35,7 @@
 # Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 prog='godaddy-ddns'
-version='0.2'
+version='0.3'
 author='Carl Edman (CarlEdman@gmail.com)'
 
 import sys, json, argparse
@@ -58,7 +59,7 @@ parser.add_argument('--version', action='version',
   version='{} {}'.format(prog, version))
 
 parser.add_argument('hostname', type=str,
-  help='DNS fully-qualified host name with an A record')
+  help='DNS fully-qualified host name with an A record.  If the hostname consists of only a domain name (i.e., it contains only one period), the record for @ is updated.')
 
 parser.add_argument('--ip', type=str, default=None,
   help='DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)')
@@ -75,9 +76,11 @@ args = parser.parse_args()
 def main():
   hostnames = args.hostname.split('.')
   
-  if len(hostnames)<3:
+  if len(hostnames)<2:
     msg = 'Hostname "{}" is not a fully-qualified host name of form "HOST.DOMAIN.TOP".'.format(args.hostname)
     raise Exception(msg)
+  elif len(hostnames)<3:
+    hostnames.insert(0,'@')
   
   if not args.ip:
     try:
