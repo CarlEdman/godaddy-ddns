@@ -131,6 +131,8 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
         msg = 'Unable to set IP address: "{}" has invalid domain or lacks A record.'.format(args.hostname)
     elif e.code==429:
         msg = 'Unable to set IP address: too many requests to GoDaddy within brief period.'
+    elif e.code==503:
+        msg = 'Unable to set IP address: "{}" is unavailable'.format(args.hostname)
     else:
       msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
