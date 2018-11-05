@@ -18,11 +18,11 @@
 #   --secret SECRET  GoDaddy production secret
 #   --ttl TTL        DNS TTL.
 #
-# GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at 
-# https://developer.godaddy.com/keys/.  
-# 
+# GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at
+# https://developer.godaddy.com/keys/.
+#
 # Note that command line arguments may be specified in a FILE, one to a line, by instead giving
-# the argument "%FILE".  For security reasons, it is particularly recommended to supply the 
+# the argument "%FILE".  For security reasons, it is particularly recommended to supply the
 # KEY and SECRET arguments in such a file, rather than directly on the command line:
 #
 # Create a file named, e.g., `godaddy-ddns.config` with the content:
@@ -48,11 +48,11 @@ else:
   from urllib2 import URLError, HTTPError
 
 parser = argparse.ArgumentParser(description='Update GoDaddy DNS "A" Record.', fromfile_prefix_chars='%', epilog= \
-'''GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at 
-https://developer.godaddy.com/keys/.  
+'''GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at
+https://developer.godaddy.com/keys/.
 
 Note that command line arguments may be specified in a FILE, one to a line, by instead giving
-the argument "%FILE".  For security reasons, it is particularly recommended to supply the 
+the argument "%FILE".  For security reasons, it is particularly recommended to supply the
 KEY and SECRET arguments in such a file, rather than directly on the command line.''')
 
 parser.add_argument('--version', action='version',
@@ -75,13 +75,12 @@ args = parser.parse_args()
 
 def main():
   hostnames = args.hostname.split('.')
-  
   if len(hostnames)<2:
     msg = 'Hostname "{}" is not a fully-qualified host name of form "HOST.DOMAIN.TOP".'.format(args.hostname)
     raise Exception(msg)
   elif len(hostnames)<3:
     hostnames.insert(0,'@')
-  
+
   if not args.ip:
     try:
       with urlopen("http://ipv4.icanhazip.com/") as f: resp=f.read()
@@ -90,7 +89,7 @@ def main():
     except URLError:
       msg = 'Unable to automatically obtain IP address from http://ipv4.icanhazip.com/.'
       raise Exception(msg)
-  
+
   ips = args.ip.split('.')
   if len(ips)!=4 or \
     not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
@@ -107,7 +106,7 @@ def main():
   req.add_header("Accept","application/json")
   if args.key and args.secret:
     req.add_header("Authorization", "sso-key {}:{}".format(args.key,args.secret))
-  
+
   try:
     with urlopen(req) as f: resp = f.read()
     if sys.version_info > (3,):  resp = resp.decode('utf-8')
@@ -137,8 +136,8 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
   except URLError as e:
     msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
-  
+
   print('IP address for {} set to {}.'.format(args.hostname,args.ip))
-  
+
 if __name__ == '__main__':
   main()

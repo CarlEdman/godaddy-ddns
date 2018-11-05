@@ -21,27 +21,27 @@ Usage
 Invoke the program like this:
 
      godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY] [--secret SECRET] [--ttl TTL] hostname
-     
-     positional arguments: 
-     
+
+     positional arguments:
+
      hostname         DNS fully-qualified host name with an 'A' record.  If the hostname consists of only a domain name
                       (i.e., it contains only one period), the record for '@' is updated.
-     
+
      optional arguments:
-     
+
      -h, --help       show this help message and exit
-     
+
      --version        show program's version number and exit
-     
+
      --ip IP          DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)
-     
+
      --key KEY        GoDaddy production key
-     
+
      --secret SECRET  GoDaddy production secret
-     
+
      --ttl TTL        DNS TTL.
 
-GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.  
+GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.
 
 Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
 
@@ -61,4 +61,4 @@ Credits and Thanks
  - [GoDaddy](https://www.godaddy.com/) for having an [API](https://developer.godaddy.com/).
  - [icanhazip.com](http://icanhazip.com/) for making grabbing your public IP
     from a script super easy.
- - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record. 
+ - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record.
