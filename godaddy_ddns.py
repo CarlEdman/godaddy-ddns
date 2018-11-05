@@ -111,8 +111,8 @@ def main():
   try:
     with urlopen(req) as f: resp = f.read()
     if sys.version_info > (3,):  resp = resp.decode('utf-8')
-    resp = json.loads(resp)
-  except HTTPError(e):
+    # resp = json.loads(resp)
+  except HTTPError as e:
     if e.code==400:
       msg = 'Unable to set IP address: GoDaddy API URL ({}) was malformed.'.format(req.full_url)
     elif e.code==401:
@@ -134,7 +134,7 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
     else:
       msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
-  except URLError(e):
+  except URLError as e:
     msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
   
