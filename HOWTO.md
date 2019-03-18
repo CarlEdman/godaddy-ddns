@@ -1,6 +1,6 @@
 The following instructions were quickly thrown together in response to a github request.  They should give a more newbie (or perhaps more accurately, at-least intermediate-user) friendly description of how to use this script.
 
-The godaddy-ddns enables you to point a hostname within a GoDaddy registered domain to automatically point to a potentially changing IP address.  This is particularly useful if your ISP occasionally reassigns your IP address, but you want to give access to some services under a fixed host name.
+The godaddy-ddns script enables you to point a hostname within a GoDaddy registered domain to automatically point to a potentially changing IP address.  This is particularly useful if your ISP occasionally reassigns your IP address, but you want to give access to some services under a fixed host name.
 
 What you will need are:
 
