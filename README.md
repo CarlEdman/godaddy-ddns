@@ -6,12 +6,13 @@ A script for dynamically updating a GoDaddy DNS record. I use GoDaddy to host DN
 
 Dependencies
 ------------
-This program was written and tested using Python 3.4, so you'll need:
+This program was written and tested using Python 3, so you'll need:
 
  - Python (`opkg install python3-light`):
  - Codecs (`opkg install python3-codecs`)
  - Email (`opkg install python3-email`)
  - OpenSSL (`opkg install python3-openssl`)
+ - CA Certificates (`opkg install ca-bundle`)
 
 The program may also work under Python 2.7 by changing python3 to python in the first line, but this configuration has not
 been tested.
@@ -43,7 +44,7 @@ Invoke the program like this:
 
 GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.
 
-Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
+Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "%FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
 
 Create a file named, e.g., `godaddy-ddns.config` with the content:
 
