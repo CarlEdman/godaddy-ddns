@@ -89,16 +89,18 @@ def main():
     except URLError:
       msg = 'Unable to automatically obtain IP address from http://ipv4.icanhazip.com/.'
       raise Exception(msg)
-
-  ips = args.ip.split('.')
-  if len(ips)!=4 or \
-    not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
-    int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
-    msg = '"{}" is not valid IP address.'.format(args.ip)
-    raise Exception(msg)
+  
+  ipslist = args.ip.split(",")
+  for ipsiter in ipslist:
+    ips = ipsiter.split('.')
+    if len(ips)!=4 or \
+      not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
+      int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
+      msg = '"{}" is not valid IP address.'.format(args.ip)
+      raise Exception(msg)
 
   url = 'https://api.godaddy.com/v1/domains/{}/records/A/{}'.format('.'.join(hostnames[1:]),hostnames[0])
-  data = json.dumps([ { "data": args.ip, "ttl": args.ttl, "name": hostnames[0], "type": "A" } ])
+  data = json.dumps([ { "data": ip, "ttl": args.ttl, "name": hostnames[0], "type": "A" } for ip in  ipslist])
   if sys.version_info > (3,):  data = data.encode('utf-8')
   req = Request(url, method='PUT', data=data)
 
