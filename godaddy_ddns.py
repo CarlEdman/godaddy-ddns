@@ -3,7 +3,7 @@
 # Update GoDaddy DNS "A" Record.
 #
 # usage: godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY]
-#                        [--secret SECRET] [--ttl TTL]
+#                        [--secret SECRET] [--ttl TTL] [--force]
 #                        hostname
 #
 # positional arguments:
@@ -17,6 +17,7 @@
 #   --key KEY        GoDaddy production key
 #   --secret SECRET  GoDaddy production secret
 #   --ttl TTL        DNS TTL.
+#   --force          force update of GoDaddy DNS record even if DNS query indicates that record is already correct
 #
 # GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at
 # https://developer.godaddy.com/keys/.
