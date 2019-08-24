@@ -83,7 +83,7 @@ def main():
 
   if not args.ip:
     try:
-      with urlopen("http://ipv4.icanhazip.com/") as f: resp=f.read()
+      with urlopen("https://ipv4.icanhazip.com/") as f: resp=f.read()
       if sys.version_info > (3,): resp = resp.decode('utf-8')
       args.ip = resp.strip()
     except URLError:
