@@ -35,10 +35,10 @@
 # Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 prog='godaddy-ddns'
-version='0.3'
+version='0.4'
 author='Carl Edman (CarlEdman@gmail.com)'
 
-import sys, json, argparse
+import sys, json, argparse, socket
 
 if sys.version_info > (3,):
   from urllib.request import urlopen, Request
@@ -70,7 +70,12 @@ parser.add_argument('--key', type=str, default='',
 parser.add_argument('--secret', type=str, default='',
   help='GoDaddy production secret')
 
-parser.add_argument('--ttl', type=int, default=3600 , help='DNS TTL.')
+parser.add_argument('--ttl', type=int, default=3600,
+  help='DNS TTL.')
+
+parser.add_argument('--force', type=bool, default=false,
+  help='force update of GoDaddy DNS record even if DNS query indicates that record is already correct.')
+
 args = parser.parse_args()
 
 def main():
@@ -96,9 +101,18 @@ def main():
     if len(ips)!=4 or \
       not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
       int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
-      msg = '"{}" is not valid IP address.'.format(args.ip)
+      msg = '"{}" is not valid IP address.'.format(ips)
       raise Exception(msg)
 
+  if not args.force and len(ipslist)==1:
+    try:
+      dnsaddr = socket.gethostbyname(args.hostname)
+      if ipslist[0] == dnsaddr:
+        msg = '{} already has IP address {}.'.format(args.hostname, dnsaddr)
+        raise Exception(msg)
+    except:
+      pass
+             
   url = 'https://api.godaddy.com/v1/domains/{}/records/A/{}'.format('.'.join(hostnames[1:]),hostnames[0])
   data = json.dumps([ { "data": ip, "ttl": args.ttl, "name": hostnames[0], "type": "A" } for ip in  ipslist])
   if sys.version_info > (3,):  data = data.encode('utf-8')
