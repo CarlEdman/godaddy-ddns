@@ -63,3 +63,4 @@ Credits and Thanks
  - [icanhazip.com](http://icanhazip.com/) for making grabbing your public IP
     from a script super easy.
  - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record.
+ - [ChrisSwanson](https://github.com/ChrisSwanson) for icanhazip.com https patch.
