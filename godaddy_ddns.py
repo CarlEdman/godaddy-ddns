@@ -74,7 +74,7 @@ parser.add_argument('--secret', type=str, default='',
 parser.add_argument('--ttl', type=int, default=3600,
   help='DNS TTL.')
 
-parser.add_argument('--force', type=bool, default=false,
+parser.add_argument('--force', type=bool, default=False,
   help='force update of GoDaddy DNS record even if DNS query indicates that record is already correct.')
 
 args = parser.parse_args()
