@@ -4,6 +4,14 @@ Introduction
 ------------
 A script for dynamically updating a GoDaddy DNS record. I use GoDaddy to host DNS for a domain and I wanted to point an A record in that domain to a host who's IP address changes occasionally. GoDaddy has an API to do this, so this happened.  This package, in particular this README.MD, is inspired by the equivalent for CloudFlare offered by [thatjpk](https://github.com/thatjpk/cloudflare-ddns).
 
+Docker
+------
+This program can be run as a Docker container, or on a device in your home network running Python 3.
+
+Using Docker, you can invoke the program like this:
+
+    docker run godaddyddns --version
+
 Dependencies
 ------------
 This program was written and tested using Python 3, so you'll need:
@@ -64,3 +72,4 @@ Credits and Thanks
     from a script super easy.
  - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record.
  - [ChrisSwanson](https://github.com/ChrisSwanson) for icanhazip.com https patch.
+ - [cwilby](https://github.com/cwilby) for providing a Docker image of this script.
