@@ -63,7 +63,7 @@ parser.add_argument('hostname', type=str,
   help='DNS fully-qualified host name with an A record.  If the hostname consists of only a domain name (i.e., it contains only one period), the record for @ is updated.')
 
 parser.add_argument('--ip', type=str, default=None,
-  help='DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)')
+  help='IPv4 address to write to DNS record (defaults to public WAN address from http://ipv4.icanhazip.com/)')
 
 parser.add_argument('--key', type=str, default='',
   help='GoDaddy production key')
