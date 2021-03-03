@@ -89,7 +89,7 @@ def main():
 
   if not args.ip:
     try:
-      with urlopen("https://checkip.amazonaws.com/") as f: resp=f.read()
+      with urlopen(Request("https://checkip.amazonaws.com/", headers={'User-Agent': 'Mozilla'})) as f: resp=f.read()
       if sys.version_info > (3,): resp = resp.decode('utf-8')
       args.ip = resp.strip()
     except URLError:
