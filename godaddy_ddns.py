@@ -13,7 +13,7 @@
 # optional arguments:
 #   -h, --help       show this help message and exit
 #   --version        show program's version number and exit
-#   --ip IP          DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)
+#   --ip IP          DNS Address (defaults to public WAN address from https://checkip.amazonaws.com/)
 #   --key KEY        GoDaddy production key
 #   --secret SECRET  GoDaddy production secret
 #   --ttl TTL        DNS TTL.
@@ -63,7 +63,7 @@ parser.add_argument('hostname', type=str,
   help='DNS fully-qualified host name with an A record.  If the hostname consists of only a domain name (i.e., it contains only one period), the record for @ is updated.')
 
 parser.add_argument('--ip', type=str, default=None,
-  help='IPv4 address to write to DNS record (defaults to public WAN address from http://ipv4.icanhazip.com/)')
+  help='IPv4 address to write to DNS record (defaults to public WAN address from https://checkip.amazonaws.com/)')
 
 parser.add_argument('--key', type=str, default='',
   help='GoDaddy production key')
@@ -89,11 +89,11 @@ def main():
 
   if not args.ip:
     try:
-      with urlopen("https://ipv4.icanhazip.com/") as f: resp=f.read()
+      with urlopen(Request("https://checkip.amazonaws.com/", headers={'User-Agent': 'Mozilla'})) as f: resp=f.read()
       if sys.version_info > (3,): resp = resp.decode('utf-8')
       args.ip = resp.strip()
     except URLError:
-      msg = 'Unable to automatically obtain IP address from http://ipv4.icanhazip.com/.'
+      msg = 'Unable to automatically obtain IP address from https://checkip.amazonaws.com/.'
       raise Exception(msg)
   
   ipslist = args.ip.split(",")
