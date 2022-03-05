@@ -3,7 +3,7 @@
 # Update GoDaddy DNS "A" Record.
 #
 # usage: godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY]
-#                        [--secret SECRET] [--ttl TTL]
+#                        [--secret SECRET] [--ttl TTL] [--force]
 #                        hostname
 #
 # positional arguments:
@@ -13,10 +13,11 @@
 # optional arguments:
 #   -h, --help       show this help message and exit
 #   --version        show program's version number and exit
-#   --ip IP          DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)
+#   --ip IP          DNS Address (defaults to public WAN address from https://checkip.amazonaws.com/)
 #   --key KEY        GoDaddy production key
 #   --secret SECRET  GoDaddy production secret
 #   --ttl TTL        DNS TTL.
+#   --force          force update of GoDaddy DNS record even if DNS query indicates that record is already correct
 #
 # GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at
 # https://developer.godaddy.com/keys/.
@@ -35,10 +36,10 @@
 # Then just invoke `godaddy-ddns %godaddy-ddns.config`
 
 prog='godaddy-ddns'
-version='0.3'
+version='0.4'
 author='Carl Edman (CarlEdman@gmail.com)'
 
-import sys, json, argparse
+import sys, json, argparse, socket
 
 if sys.version_info > (3,):
   from urllib.request import urlopen, Request
@@ -62,7 +63,7 @@ parser.add_argument('hostname', type=str,
   help='DNS fully-qualified host name with an A record.  If the hostname consists of only a domain name (i.e., it contains only one period), the record for @ is updated.')
 
 parser.add_argument('--ip', type=str, default=None,
-  help='DNS Address (defaults to public WAN address from http://ipv4.icanhazip.com/)')
+  help='IPv4 address to write to DNS record (defaults to public WAN address from https://checkip.amazonaws.com/)')
 
 parser.add_argument('--key', type=str, default='',
   help='GoDaddy production key')
@@ -70,7 +71,12 @@ parser.add_argument('--key', type=str, default='',
 parser.add_argument('--secret', type=str, default='',
   help='GoDaddy production secret')
 
-parser.add_argument('--ttl', type=int, default=3600 , help='DNS TTL.')
+parser.add_argument('--ttl', type=int, default=3600,
+  help='DNS TTL.')
+
+parser.add_argument('--force', type=bool, default=False,
+  help='force update of GoDaddy DNS record even if DNS query indicates that record is already correct.')
+
 args = parser.parse_args()
 
 def main():
@@ -83,22 +89,33 @@ def main():
 
   if not args.ip:
     try:
-      with urlopen("http://ipv4.icanhazip.com/") as f: resp=f.read()
+      with urlopen(Request("https://checkip.amazonaws.com/", headers={'User-Agent': 'Mozilla'})) as f: resp=f.read()
       if sys.version_info > (3,): resp = resp.decode('utf-8')
       args.ip = resp.strip()
     except URLError:
-      msg = 'Unable to automatically obtain IP address from http://ipv4.icanhazip.com/.'
+      msg = 'Unable to automatically obtain IP address from https://checkip.amazonaws.com/.'
+      raise Exception(msg)
+  
+  ipslist = args.ip.split(",")
+  for ipsiter in ipslist:
+    ips = ipsiter.split('.')
+    if len(ips)!=4 or \
+      not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
+      int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
+      msg = '"{}" is not valid IP address.'.format(ips)
       raise Exception(msg)
 
-  ips = args.ip.split('.')
-  if len(ips)!=4 or \
-    not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
-    int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
-    msg = '"{}" is not valid IP address.'.format(args.ip)
-    raise Exception(msg)
-
+  if not args.force and len(ipslist)==1:
+    try:
+      dnsaddr = socket.gethostbyname(args.hostname)
+      if ipslist[0] == dnsaddr:
+        msg = '{} already has IP address {}.'.format(args.hostname, dnsaddr)
+        raise Exception(msg)
+    except:
+      pass
+             
   url = 'https://api.godaddy.com/v1/domains/{}/records/A/{}'.format('.'.join(hostnames[1:]),hostnames[0])
-  data = json.dumps([ { "data": args.ip, "ttl": args.ttl, "name": hostnames[0], "type": "A" } ])
+  data = json.dumps([ { "data": ip, "ttl": args.ttl, "name": hostnames[0], "type": "A" } for ip in  ipslist])
   if sys.version_info > (3,):  data = data.encode('utf-8')
   req = Request(url, method='PUT', data=data)
 
@@ -130,6 +147,8 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
         msg = 'Unable to set IP address: "{}" has invalid domain or lacks A record.'.format(args.hostname)
     elif e.code==429:
         msg = 'Unable to set IP address: too many requests to GoDaddy within brief period.'
+    elif e.code==503:
+        msg = 'Unable to set IP address: "{}" is unavailable.'.format(args.hostname)
     else:
       msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)

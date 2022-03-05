@@ -4,14 +4,23 @@ Introduction
 ------------
 A script for dynamically updating a GoDaddy DNS record. I use GoDaddy to host DNS for a domain and I wanted to point an A record in that domain to a host who's IP address changes occasionally. GoDaddy has an API to do this, so this happened.  This package, in particular this README.MD, is inspired by the equivalent for CloudFlare offered by [thatjpk](https://github.com/thatjpk/cloudflare-ddns).
 
+Docker
+------
+This program can be run as a Docker container, or on a device in your home network running Python 3.
+
+Using Docker, you can invoke the program like this:
+
+    docker run godaddyddns --version
+
 Dependencies
 ------------
-This program was written and tested using Python 3.4, so you'll need:
+This program was written and tested using Python 3, so you'll need:
 
  - Python (`opkg install python3-light`):
  - Codecs (`opkg install python3-codecs`)
  - Email (`opkg install python3-email`)
  - OpenSSL (`opkg install python3-openssl`)
+ - CA Certificates (`opkg install ca-bundle`)
 
 The program may also work under Python 2.7 by changing python3 to python in the first line, but this configuration has not
 been tested.
@@ -43,7 +52,7 @@ Invoke the program like this:
 
 GoDaddy customers can obtain values for the KEY and SECRET arguments by creating a production key at https://developer.godaddy.com/keys/.
 
-Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "@FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
+Note that command line arguments may be specified in a FILE, one to a line, by instead giving the argument "%FILE".  For security reasons, it is particularly recommended to supply the KEY and SECRET arguments in such a file, rather than directly on the command line:
 
 Create a file named, e.g., `godaddy-ddns.config` with the content:
 
@@ -62,3 +71,5 @@ Credits and Thanks
  - [icanhazip.com](http://icanhazip.com/) for making grabbing your public IP
     from a script super easy.
  - [dhowdy](https://github.com/dhowdy) for supplying a fix to problem with updating root DNS record.
+ - [ChrisSwanson](https://github.com/ChrisSwanson) for icanhazip.com https patch.
+ - [cwilby](https://github.com/cwilby) for providing a Docker image of this script.
