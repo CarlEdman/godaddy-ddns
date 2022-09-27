@@ -4,11 +4,12 @@
 #
 # usage: godaddy_ddns.py [-h] [--version] [--ip IP] [--key KEY]
 #                        [--secret SECRET] [--ttl TTL] [--force]
-#                        hostname
+#                        hostname(s)
 #
 # positional arguments:
 #   hostname         DNS fully-qualified host name with an 'A' record.  If the hostname consists of only a domain name
 #                    (i.e., it contains only one period), the record for '@' is updated.
+#                    multiple hostnames may be provided in a comma separated list
 #
 # optional arguments:
 #   -h, --help       show this help message and exit
@@ -79,37 +80,19 @@ parser.add_argument('--force', type=bool, default=False,
 
 args = parser.parse_args()
 
-def main():
-  hostnames = args.hostname.split('.')
+def handle_host(host,ipslist):
+  hostnames = host.split('.')
   if len(hostnames)<2:
     msg = 'Hostname "{}" is not a fully-qualified host name of form "HOST.DOMAIN.TOP".'.format(args.hostname)
     raise Exception(msg)
   elif len(hostnames)<3:
     hostnames.insert(0,'@')
 
-  if not args.ip:
-    try:
-      with urlopen(Request("https://checkip.amazonaws.com/", headers={'User-Agent': 'Mozilla'})) as f: resp=f.read()
-      if sys.version_info > (3,): resp = resp.decode('utf-8')
-      args.ip = resp.strip()
-    except URLError:
-      msg = 'Unable to automatically obtain IP address from https://checkip.amazonaws.com/.'
-      raise Exception(msg)
-  
-  ipslist = args.ip.split(",")
-  for ipsiter in ipslist:
-    ips = ipsiter.split('.')
-    if len(ips)!=4 or \
-      not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
-      int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
-      msg = '"{}" is not valid IP address.'.format(ips)
-      raise Exception(msg)
-
   if not args.force and len(ipslist)==1:
     try:
-      dnsaddr = socket.gethostbyname(args.hostname)
+      dnsaddr = socket.gethostbyname(host)
       if ipslist[0] == dnsaddr:
-        msg = '{} already has IP address {}.'.format(args.hostname, dnsaddr)
+        msg = '{} already has IP address {}.'.format(host, dnsaddr)
         raise Exception(msg)
     except:
       pass
@@ -142,13 +125,13 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
         msg = '''Unable to set IP address: customer identified by --key and --secret options denied permission.
 Correct values can be obtained from from https://developer.godaddy.com/keys/ and are ideally placed in a % file.'''
     elif e.code==404:
-        msg = 'Unable to set IP address: {} not found at GoDaddy.'.format(args.hostname)
+        msg = 'Unable to set IP address: {} not found at GoDaddy.'.format(host)
     elif e.code==422:
-        msg = 'Unable to set IP address: "{}" has invalid domain or lacks A record.'.format(args.hostname)
+        msg = 'Unable to set IP address: "{}" has invalid domain or lacks A record.'.format(host)
     elif e.code==429:
         msg = 'Unable to set IP address: too many requests to GoDaddy within brief period.'
     elif e.code==503:
-        msg = 'Unable to set IP address: "{}" is unavailable.'.format(args.hostname)
+        msg = 'Unable to set IP address: "{}" is unavailable.'.format(host)
     else:
       msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
@@ -156,7 +139,36 @@ Correct values can be obtained from from https://developer.godaddy.com/keys/ and
     msg = 'Unable to set IP address: GoDaddy API failure because "{}".'.format(e.reason)
     raise Exception(msg)
 
-  print('IP address for {} set to {}.'.format(args.hostname,args.ip))
+  print('IP address for {} set to {}.'.format(host,args.ip))
+
+
+
+
+
+
+def main():
+  if not args.ip:
+    try:
+      with urlopen(Request("https://checkip.amazonaws.com/", headers={'User-Agent': 'Mozilla'})) as f: resp=f.read()
+      if sys.version_info > (3,): resp = resp.decode('utf-8')
+      args.ip = resp.strip()
+    except URLError:
+      msg = 'Unable to automatically obtain IP address from https://checkip.amazonaws.com/.'
+      raise Exception(msg)
+  
+  ipslist = args.ip.split(",")
+  for ipsiter in ipslist:
+    ips = ipsiter.split('.')
+    if len(ips)!=4 or \
+      not ips[0].isdigit() or not ips[1].isdigit() or not ips[2].isdigit() or not ips[3].isdigit() or \
+      int(ips[0])>255 or int(ips[1])>255 or int(ips[2])>255 or int(ips[3])>255:
+      msg = '"{}" is not valid IP address.'.format(ips)
+      raise Exception(msg)
+
+  hostlist = args.hostname.split(',')
+  for host in hostlist:
+    handle_host(host,ipslist)
+
 
 if __name__ == '__main__':
   main()
